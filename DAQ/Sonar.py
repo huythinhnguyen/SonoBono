@@ -15,7 +15,7 @@ import Ports
 class Sonar:
     def __init__(self):
         self.id = id(self)
-        self.product_key = 'FT231X USB UART'
+        self.product_key = 'DN00S38K'
         self.baud_rate = 3e6
         self.vcc = 3.3
 

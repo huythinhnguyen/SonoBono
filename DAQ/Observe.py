@@ -20,9 +20,6 @@ import Settings
 import Ports
 import Sonar
 
-import matplotlib.pyplot as plt
-
-
 class Observe:
     def __init__(self):
         # Prepare Logger
@@ -82,12 +79,7 @@ if __name__ == "__main__":
             print(observe.echo['left'])
             print('RIGHT = ')
             print(observe.echo['right'])
-
-            plt.plot(observe.echo['left'], alpha = 0.6, label = 'LEFT')
-            plt.plot(observe.echo['right'], alpha = 0.6, label = 'RIGHT')
-            plt.legend()
-            plt.show()
-
+            
         elif text == 'cf': #close fig
             plt.close()
         else:
