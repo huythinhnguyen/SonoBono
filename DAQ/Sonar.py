@@ -3,7 +3,10 @@ import time
 import serial
 import numpy
 import struct
-import Ports
+try: import Ports
+except:
+    import os
+    if os.path.exists('DAQ'): from DAQ import Ports
 
 # Color conventions
 # Green connected
