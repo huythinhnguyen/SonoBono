@@ -1,5 +1,6 @@
 import numpy as np
 import warnings
+import sys
 
 class State:
     def __init__(self, state:'[x (mm), y (mm), theta(degree), v(mm/s), w(degee/s)]'=None, degree_mode=True):
@@ -12,13 +13,6 @@ class State:
         self.v = new_v
         self.w = new_w
         
-    
-    def move_distance(self, dt:'time step (s)'): -> 'forward distance in mm'
-        return self.v*dt
-    
-    
-    def turn_angle(self, dt:'time step (s)'): -> 'amount of left turn in degrees'
-        return self.w*dt
     
     def update_pose(self, dt:'time of eachs step/ next step (s)'):
         ### NEED TO DO THIS NEXT
@@ -56,7 +50,7 @@ class RobotTranslator:
     def update_direct(self, new_left:'left wheel vel.', new_right:'right wheel vel.'):
         self.vL = new_left
         self.vR = new_right
-       
+        
     
     def kinematic_to_direct(self, v:'linear vel.', w:'angular vel.'): -> 'vL, vR'
         vL = v - (self.wheelbase/2)*np.radians(w)
@@ -82,22 +76,55 @@ class RobotTranslator:
         
         if mode == 'k':
             self.update_kinematic(kinematic[0], kinematic[1])
-            self.vL, self.vR = self.kinematic_to_direct()
+            self.vL, self.vR = self.kinematic_to_direct(v=self.v, w=self.w)
             
         if mode == 'd':
-            self.v = (self.vL + self.vR)/2
-            self.w = np.degrees((self.vL - self.vR)/L)
+            self.v, self.w = self.direct_to_kinematic(vL=self.vL, vR=self.vR)
             
         if self.mode == 'actuate':
-            self.vL, self.vR = (int(self.vL),int(self.vR))
-            self.v = (self.vL + self.vR)/2
-            self.w = np.degrees((self.vL - self.vR)/L)
+            self.vL, self.vR = (int(np.round(self.vL)), int(np.round(self.vR)) )
+            self.v, self.w = self.direct_to_kinematic(vL=self.vL, vR=self.vR)
             self.actuate()
     
     
-    def move_distance(self, d:'distance (mm)', v=100, w=0):
+    def move(self, d:'forward distance (mm)', v=100.0, w=0.0, bot = None):
         if self.mode == 'translation': raise ValueError('Input the Create2 object to switch to actuate mode')
+        if 'sched' not in sys.modules: import sched
         
+        dt = d/v
+        if dt < 0: 
+            dt = np.abs(dt)
+            v *= -1
+        
+        s = s.scheduler()
+        tic = time.monotonic() + 0.1
+        if s.empty():
+            s.enterabs(tic + 0, 1, self.update, kwargs={'kinematic':[v,w]})
+            s.enterabs(tic + dt, 2, self.update, kwargs={'kinematic':[0,0]})
+            s.run()
+        if not s.empty():
+            warnings.warn('scheduler queue could not be cleared!!! Not all event was run!')
+            for i in s.queue: s.cancel(i)
+        
+        
+    def turn(self, a:'left turn angle (degrees)', v=0.0, w=48.762365543):
+        if self.mode == 'translation': raise ValueError('Input the Create2 object to switch to actuate mode')
+        if 'sched' not in sys.modules: import sched
+        
+        dt = a/w
+        if dt < 0:
+            dt = np.abs(dt)
+            w *= -1
+        
+        s = s.scheduler()
+        tic = time.monotonic() + 0.1
+        if s.empty():
+            s.enterabs(tic + 0, 1, self.update, kwargs={'kinematic':[v,w]})
+            s.enterabs(tic + dt, 2, self.update, kwargs={'kinematic':[0,0]})
+            s.run()
+        if not s.empty():
+            warnings.warn('scheduler queue could not be cleared!!! Not all event was run!')
+            for i in s.queue: s.cancel(i)
         
         
         
