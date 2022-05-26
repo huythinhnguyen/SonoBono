@@ -152,9 +152,9 @@ class RobotTranslator:
         if s.empty():
             s.enterabs(tic + 0, 1, self.update, kwargs={'kinematic':[v,w]})
             if smooth_stop:
-                s.enterabs(tic + dt            , 2 self.update, kwargs={'kinematic':[v2,w]}  )
-                s.enterabs(tic + dt + dt2      , 3 self.update, kwargs={'kinematic':[v3,w]}  )
-                s.enterabs(tic + dt + dt2 + dt3, 4 self.update, kwargs={'kinematic':[0,0]}  )
+                s.enterabs(tic + dt            , 2, self.update, kwargs={'kinematic':[v2,w]}  )
+                s.enterabs(tic + dt + dt2      , 3, self.update, kwargs={'kinematic':[v3,w]}  )
+                s.enterabs(tic + dt + dt2 + dt3, 4, self.update, kwargs={'kinematic':[0,0]}  )
             else: s.enterabs(tic + dt, 2, self.update, kwargs={'kinematic':[0,0]})
             s.run()
         if not s.empty():
@@ -182,9 +182,9 @@ class RobotTranslator:
         if s.empty():
             s.enterabs(tic + 0, 1, self.update, kwargs={'kinematic':[v,w]})
             if smooth_stop:
-                s.enterabs(tic + dt            , 2 self.update, kwargs={'kinematic':[v2,w]}  )
-                s.enterabs(tic + dt + dt2      , 3 self.update, kwargs={'kinematic':[v3,w]}  )
-                s.enterabs(tic + dt + dt2 + dt3, 4 self.update, kwargs={'kinematic':[0,0]}  )
+                s.enterabs(tic + dt            , 2, self.update, kwargs={'kinematic':[v,w2]}  )
+                s.enterabs(tic + dt + dt2      , 3, self.update, kwargs={'kinematic':[v,w3]}  )
+                s.enterabs(tic + dt + dt2 + dt3, 4, self.update, kwargs={'kinematic':[0,0]}  )
             else: s.enterabs(tic + dt, 2, self.update, kwargs={'kinematic':[0,0]})
             s.run()
         if not s.empty():
