@@ -35,12 +35,12 @@ class State:
         turn = w*dt
         ICC = [ x - R*np.sin(theta) , y + R*np.cos(theta) ] # instantaneous center of curvature
         pose = np.array([x,y,theta]).reshape(3,1)
-        Rotation = np.array( [[ None, None, None ],
-                              [ None, None, None ],
-                              [ None, None, None ]] ) # Rotational Matrix of turning
+        Rotation = np.array( [[ np.cos(turn), -np.sin(turn), 0 ],
+                              [ np.sin(turn),  np.cos(turn), 0 ],
+                              [  0          ,   0.         , 1 ]] ) # Rotational Matrix of turning
         
         translation = -1*np.array([*ICC,0]).reshape(3,1) # Translate reference frame to origin at ICC.
-        inverse_translation = np.array([*ICC, turn])  # Translated back to original reference frame and add to heading of pose
+        inverse_translation = np.array([*ICC, turn]).reshape(3,1)  # Translated back to original reference frame and add to heading of pose
         new_pose = np.matmul( Rotation, pose + translation  ) + inverse_translation
         if self.degree_mode: new_pose[2] = np.degrees(new_pose[2])
         self.pose = new_pose.reshape(3,)
